@@ -1,95 +1,149 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard - Chủ cửa hàng</title>
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/grid.css">
-  <link rel="stylesheet" href="../css/color.css">
-  <link rel="stylesheet" href="../css/typography.css">
-  <link rel="stylesheet" href="../css/button.css">
-  <link rel="stylesheet" href="../css/flex.css">
-  <link rel="stylesheet" href="../css/franchisee.css">
+<meta charset="UTF-8">
+<title>Dashboard - Chủ cửa hàng</title>
+<link rel="stylesheet" href="../css/reset.css">
+<link rel="stylesheet" href="../css/grid.css">
+<link rel="stylesheet" href="../css/color.css">
+<link rel="stylesheet" href="../css/typography.css">
+<link rel="stylesheet" href="../css/button.css">
+<link rel="stylesheet" href="../css/flex.css">
+<link rel="stylesheet" href="../css/franchisee.css">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <style>
+    /* ===========================
+   USER MENU (HEADER)
+=========================== */
+.franchisee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  color: #333;
+  padding: 12px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 100;
+}
+
+.franchisee-header .logo {
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0d6efd;
+}
+
+.franchisee-header .user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #333;
+}
+
+.franchisee-header .user-menu i {
+  font-size: 22px;
+  color: #0d6efd;
+}
+
+/* Dropdown */
+.franchisee-header .user-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction: column;
+  min-width: 180px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+/* Hiển thị khi hover */
+.franchisee-header .user-menu:hover .user-dropdown {
+  display: flex;
+}
+
+/* Các item trong menu */
+.franchisee-header .user-dropdown a {
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.franchisee-header .user-dropdown a:hover {
+  background: #f2f6ff;
+  color: #0d6efd;
+}
+
+/* Icon trong menu */
+.franchisee-header .user-dropdown a i {
+  width: 18px;
+  text-align: center;
+  color: #0d6efd;
+}
+
+/* Nút đăng xuất */
+.franchisee-header .user-dropdown a.logout {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.franchisee-header .user-dropdown a.logout:hover {
+  background: #ffe8e8;
+  color: #b31d2e;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+  </style>
+
+<!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
-  <!-- Header -->
-  <header class="franchisee-header">
-    <div class="logo"><i class="fas fa-store"></i> Mì Cay Đức Hiệu - CN Quận 1</div>
-    <div class="user-menu"><i class="fas fa-user-circle"></i> Nguyễn Văn A (Chủ cửa hàng)</div>
-  </header>
+<!-- Header -->
+<header class="franchisee-header">
+<div class="logo"><i class="fas fa-store"></i> Mì Cay Đức Hiệu - CN Quận 1</div>
 
-  <!-- Sidebar -->
-  <aside class="franchisee-sidebar">
-    <ul>
-      <li class="active"><a href="dashboard.html" style="color: black; text-decoration: none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-      <li><a href="revenue.html" style="color: black; text-decoration: none;"><i class="fas fa-dollar-sign"></i> Doanh thu</a></li>
-      <li><a href="contract.html" target="_blank" style="color: black; text-decoration: none;"><i class="fas fa-file-contract"></i> Hợp đồng</a></li>
-      <li><i class="fas fa-tags"></i> Khuyến mãi</li>
-      <li><i class="fas fa-bell"></i> Thông báo</li>
-    </ul>
-  </aside>
+    <div class="user-menu" id="userMenu">
+      <i class="fas fa-user-circle"></i>
+      <span>Nguyễn Văn Anh (Chủ cửa hàng)</span>
 
-  <!-- Main -->
-  <main class="franchisee-main">
-    <h1 class="fs-2 fw-bold mb-3">Tổng quan cửa hàng</h1>
-
-    <!-- Cards -->
-    <div class="franchisee-cards">
-      <div class="franchisee-card blue">
-        <i class="fas fa-coins"></i>
-        <h3>Doanh thu tháng</h3>
-        <p>150 triệu</p>
-      </div>
-      <div class="franchisee-card green">
-        <i class="fas fa-file-contract"></i>
-        <h3>Hợp đồng</h3>
-        <p>Còn hiệu lực</p>
-      </div>
-      <div class="franchisee-card orange">
-        <i class="fas fa-percentage"></i>
-        <h3>Khuyến mãi</h3>
-        <p>2 chương trình</p>
-      </div>
-      <div class="franchisee-card red">
-        <i class="fas fa-bell"></i>
-        <h3>Thông báo</h3>
-        <p>3 thông báo mới</p>
+      <div class="user-dropdown">
+        <a href="profile.html"><i class="fas fa-id-card"></i> Trang cá nhân</a>
+        <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
       </div>
     </div>
+</header>
 
-    <!-- Revenue Chart -->
-    <div class="franchisee-chart">
-      <h3><i class="fas fa-chart-bar"></i> Doanh thu 6 tháng gần nhất</h3>
-      <div id="chartBars" class="chart-bars"></div>
-    </div>
-  </main>
-
-  <!-- Script -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const chartBars = document.getElementById("chartBars");
-
-      // Dummy data: 6 tháng gần nhất
-      const revenues = [
-        { month: "04/2025", value: 120 },
-        { month: "05/2025", value: 140 },
-        { month: "06/2025", value: 135 },
-        { month: "07/2025", value: 160 },
-        { month: "08/2025", value: 145 },
-        { month: "09/2025", value: 150 }
-      ];
-
-      revenues.forEach(r => {
-        const bar = document.createElement("div");
-        bar.className = "chart-bar";
-        bar.style.height = (r.value * 1.2) + "px"; // scale
-        bar.innerHTML = `<span>${r.value}<br>${r.month}</span>`;
-        chartBars.appendChild(bar);
-      });
-    });
-  </script>
-</body>
-</html>
+<!-- Sidebar -->
+@@ -27,8 +144,8 @@
+<li class="active"><a href="dashboard.html" style="color: black; text-decoration: none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+<li><a href="revenue.html" style="color: black; text-decoration: none;"><i class="fas fa-dollar-sign"></i> Doanh thu</a></li>
+<li><a href="contract.html" target="_blank" style="color: black; text-decoration: none;"><i class="fas fa-file-contract"></i> Hợp đồng</a></li>
+      <li><a href="promotion.html" style="color: black; text-decoration: none;"><i class="fas fa-tags"></i> Khuyến mãi</a></li>
+      <li><a href="notification.html" style="color: black; text-decoration: none;"><i class="fas fa-bell"></i> Thông báo</a></li>
+</ul>
+</aside>

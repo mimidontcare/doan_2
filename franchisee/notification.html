@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thông báo - Franchisee</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/grid.css">
+  <link rel="stylesheet" href="../css/color.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/button.css">
+  <link rel="stylesheet" href="../css/flex.css">
+  <link rel="stylesheet" href="../css/franchisee.css">
+  <style>
+    /* ===========================
+   USER MENU (HEADER)
+=========================== */
+.franchisee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  color: #333;
+  padding: 12px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 100;
+}
+
+.franchisee-header .logo {
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0d6efd;
+}
+
+.franchisee-header .user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #333;
+}
+
+.franchisee-header .user-menu i {
+  font-size: 22px;
+  color: #0d6efd;
+}
+
+/* Dropdown */
+.franchisee-header .user-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction: column;
+  min-width: 180px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.15s ease-in-out;
+}
+
+/* Hiển thị khi hover */
+.franchisee-header .user-menu:hover .user-dropdown {
+  display: flex;
+}
+
+/* Các item trong menu */
+.franchisee-header .user-dropdown a {
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.franchisee-header .user-dropdown a:hover {
+  background: #f2f6ff;
+  color: #0d6efd;
+}
+
+/* Icon trong menu */
+.franchisee-header .user-dropdown a i {
+  width: 18px;
+  text-align: center;
+  color: #0d6efd;
+}
+
+/* Nút đăng xuất */
+.franchisee-header .user-dropdown a.logout {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.franchisee-header .user-dropdown a.logout:hover {
+  background: #ffe8e8;
+  color: #b31d2e;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+  </style>
+    <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+  <!-- Header -->
+  <header class="franchisee-header">
+    <div class="logo"><i class="fas fa-store"></i> Mì Cay Đức Hiệu - CN Quận 1</div>
+
+    <div class="user-menu" id="userMenu">
+      <i class="fas fa-user-circle"></i>
+      <span>Nguyễn Văn Anh (Chủ cửa hàng)</span>
+
+      <div class="user-dropdown">
+        <a href="profile.html"><i class="fas fa-id-card"></i> Trang cá nhân</a>
+        <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="franchisee-sidebar">
+    <ul>
+      <li><a href="dashboard.html" style="color: black; text-decoration: none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="revenue.html" style="color: black; text-decoration: none;"><i class="fas fa-dollar-sign"></i> Doanh thu</a></li>
+      <li><a href="contract.html" target="_blank" style="color: black; text-decoration: none;"><i class="fas fa-file-contract"></i> Hợp đồng</a></li>
+      <li><a href="promotion.html" style="color: black; text-decoration: none;"><i class="fas fa-tags"></i> Khuyến mãi</a></li>
+      <li class="active"><a href="notification.html" style="color: black; text-decoration: none;"><i class="fas fa-bell"></i> Thông báo</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="franchisee-main">
+    <h1 class="fs-2 fw-bold mb-3">Thông báo hệ thống</h1>
+
+    <!-- Search -->
+    <div class="store-search mb-3 d-flex justify-content-between align-items-center">
+      <input type="text" id="searchInput" class="franchisee-search__input" placeholder="Tìm kiếm theo tên, mã KM,...">
+      <button id="btnSearch" class="btn btn-success"><i class="fas fa-search"></i> Tìm kiếm</button>
+    </div>
+
+    <!-- Table -->
+    <table class="franchisee-table">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Tiêu đề</th>
+          <th>Nội dung</th>
+          <th>Ngày gửi</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody id="notifyTableBody">
+        <tr><td colspan="5" class="text-center">Chưa có thông báo</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div id="pagination" class="franchisee-pagination"></div>
+  </main>
+
+  <!-- Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tableBody = document.getElementById("notifyTableBody");
+      const pagination = document.getElementById("pagination");
+      const searchInput = document.getElementById("searchInput");
+      const btnSearch = document.getElementById("btnSearch");
+
+      let notifications = [
+        { id: 1, title: "Nhắc báo cáo doanh thu", content: "Vui lòng nộp báo cáo doanh thu tháng 9 trước ngày 05/10.", date: "2025-10-01", status: "Chưa đọc" },
+        { id: 2, title: "Chính sách mới", content: "Áp dụng quy định đồng bộ menu mới từ 15/10.", date: "2025-09-28", status: "Quan trọng" },
+        { id: 3, title: "Khuyến mãi tháng 10", content: "Chương trình Mua 1 tặng 1 áp dụng từ 01-07/10.", date: "2025-09-25", status: "Đã đọc" }
+      ];
+
+      let filteredNotifications = notifications;
+      let currentPage = 1;
+      const itemsPerPage = 10;
+
+      function renderTable(data, page = 1) {
+        tableBody.innerHTML = "";
+        const start = (page - 1) * itemsPerPage;
+        const end = page * itemsPerPage;
+        const pageData = data.slice(start, end);
+
+        if (pageData.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" class="text-center">Không có thông báo</td></tr>`;
+          return;
+        }
+
+        pageData.forEach((n, index) => {
+          tableBody.innerHTML += `
+            <tr>
+              <td>${start + index + 1}</td>
+              <td>${n.title}</td>
+              <td>${n.content}</td>
+              <td>${n.date}</td>
+              <td><span class="status ${n.status === "Chưa đọc" ? "success" : (n.status === "Quan trọng" ? "danger" : "warning")}">${n.status}</span></td>
+            </tr>
+          `;
+        });
+        renderPagination(data.length, page);
+      }
+
+      function renderPagination(totalItems, page) {
+        pagination.innerHTML = "";
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.className = "btn " + (i === page ? "btn-primary" : "");
+          btn.textContent = i;
+          btn.addEventListener("click", () => { currentPage = i; renderTable(filteredNotifications, currentPage); });
+          pagination.appendChild(btn);
+        }
+      }
+
+      function searchNotifications(keyword) {
+        keyword = keyword.toLowerCase();
+        filteredNotifications = notifications.filter(n =>
+          n.title.toLowerCase().includes(keyword) ||
+          n.content.toLowerCase().includes(keyword)
+        );
+        currentPage = 1;
+        renderTable(filteredNotifications, currentPage);
+      }
+
+      btnSearch.addEventListener("click", () => searchNotifications(searchInput.value.trim()));
+      searchInput.addEventListener("keyup", e => { if (e.key === "Enter") searchNotifications(searchInput.value.trim()); });
+
+      renderTable(filteredNotifications, currentPage);
+    });
+  </script>
+</body>
+</html>
