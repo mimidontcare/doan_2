@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Kế toán | Mì Cay Đức Hiệu</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/grid.css">
+  <link rel="stylesheet" href="../css/color.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/button.css">
+  <link rel="stylesheet" href="../css/flex.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/common.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    .chart-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-top: 25px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 1000px;
+      height: 380px;
+      display: block;
+      margin: auto;
+    }
+
+    .year-filter {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background: #fff;
+    }
+
+    #paymentPieChart {
+      max-width: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="logo">Mì Cay Đức Hiệu - Accounting</div>
+
+    <div class="user-menu" id="userMenu">
+      <i class="fas fa-user-circle"></i>
+      <span>Accounting</span>
+
+      <div class="user-dropdown">
+        <a href="profile.html"><i class="fas fa-id-card"></i> Trang cá nhân</a>
+        <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <ul>
+      <li class="active"><a href="dashboard.html" style="color:white;text-decoration:none;"><i
+            class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn
+          phí franchise</a></li>
+      <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài
+          chính</a></li>
+      <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo
+          theo
+          cửa hàng</a></li>
+      <li><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất
+          báo cáo</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <h1 class="fs-2 fw-bold mb-3">Dashboard kế toán</h1>
+
+    <!-- Thống kê nhanh -->
+    <div class="row">
+      <div class="col l-3 m-6 c-12">
+        <div class="card card--blue">
+          <i class="fas fa-money-bill-wave"></i>
+          <h3>3.2 tỷ</h3>
+          <p>Tổng doanh thu tháng</p>
+        </div>
+      </div>
+      <div class="col l-3 m-6 c-12">
+        <div class="card card--green">
+          <i class="fas fa-coins"></i>
+          <h3>160 triệu</h3>
+          <p>Phí franchise thu được</p>
+        </div>
+      </div>
+      <div class="col l-3 m-6 c-12">
+        <div class="card card--orange">
+          <i class="fas fa-clock"></i>
+          <h3>5</h3>
+          <p>Cửa hàng chưa nộp phí</p>
+        </div>
+      </div>
+      <div class="col l-3 m-6 c-12">
+        <div class="card card--red">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <h3>32</h3>
+          <p>Hóa đơn đang xử lý</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bộ lọc -->
+    <div class="d-flex justify-content-end align-items-center mt-4">
+      <label for="yearFilter" class="fw-bold me-2">Chọn năm:</label>
+      <select id="yearFilter" class="year-filter">
+        <option value="2025" selected>Năm 2025</option>
+        <option value="2024">Năm 2024</option>
+      </select>
+    </div>
+
+    <!-- Biểu đồ 1: Doanh thu -->
+    <section class="chart-box">
+      <h2 class="fs-4 fw-bold mb-2"><i class="fas fa-chart-line text-primary"></i> Doanh thu theo tháng (tỷ VND)</h2>
+      <canvas id="revenueChart"></canvas>
+    </section>
+
+    <!-- Biểu đồ 2: Phí franchise -->
+    <section class="chart-box">
+      <h2 class="fs-4 fw-bold mb-2"><i class="fas fa-coins text-success"></i> Phí franchise theo tháng (triệu VND)</h2>
+      <canvas id="feeChart"></canvas>
+    </section>
+
+    <!-- Biểu đồ 3: Tỷ lệ thanh toán -->
+    <section class="chart-box">
+      <h2 class="fs-4 fw-bold mb-2"><i class="fas fa-pie-chart text-warning"></i> Tỷ lệ cửa hàng theo trạng thái thanh
+        toán</h2>
+      <canvas id="paymentPieChart"></canvas>
+    </section>
+
+    <!-- Báo cáo thanh toán -->
+    <section class="report mt-4">
+      <h2 class="fs-4 fw-bold mb-2">Tình trạng thanh toán theo cửa hàng</h2>
+      <table class="report__table">
+        <thead>
+          <tr>
+            <th>Cửa hàng</th>
+            <th>Kỳ tính phí</th>
+            <th>Số tiền</th>
+            <th>Ngày nộp</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CN Quận 1</td>
+            <td>09/2025</td>
+            <td>5,000,000</td>
+            <td>03/10/2025</td>
+            <td><span class="status success">Đã thanh toán</span></td>
+          </tr>
+          <tr>
+            <td>CN Quận 3</td>
+            <td>09/2025</td>
+            <td>5,000,000</td>
+            <td>-</td>
+            <td><span class="status warning">Chậm</span></td>
+          </tr>
+          <tr>
+            <td>CN Bình Thạnh</td>
+            <td>09/2025</td>
+            <td>4,500,000</td>
+            <td>04/10/2025</td>
+            <td><span class="status success">Đã thanh toán</span></td>
+          </tr>
+          <tr>
+            <td>CN Hà Nội</td>
+            <td>09/2025</td>
+            <td>6,000,000</td>
+            <td>-</td>
+            <td><span class="status danger">Chưa thanh toán</span></td>
+          </tr>
+          <tr>
+            <td>CN Đà Nẵng</td>
+            <td>09/2025</td>
+            <td>5,200,000</td>
+            <td>02/10/2025</td>
+            <td><span class="status success">Đã thanh toán</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">
+    © 2025 Mì Cay Đức Hiệu - Accounting System
+  </footer>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const revenueCtx = document.getElementById("revenueChart");
+      const feeCtx = document.getElementById("feeChart");
+      const pieCtx = document.getElementById("paymentPieChart");
+      const yearFilter = document.getElementById("yearFilter");
+
+      const data = {
+        "2025": {
+          labels: ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10"],
+          revenue: [2.4, 2.6, 2.8, 3.0, 3.3, 3.5, 3.7, 3.8, 3.9, 4.1],
+          fee: [120, 125, 130, 135, 140, 145, 150, 152, 155, 160],
+          status: { paid: 70, late: 20, unpaid: 10 }
+        },
+        "2024": {
+          labels: ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10"],
+          revenue: [1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.1, 3.3, 3.5],
+          fee: [90, 95, 100, 110, 115, 120, 125, 128, 130, 135],
+          status: { paid: 65, late: 25, unpaid: 10 }
+        }
+      };
+
+      let revenueChart, feeChart, pieChart;
+
+      function renderCharts(year) {
+        const d = data[year];
+        if (revenueChart) revenueChart.destroy();
+        if (feeChart) feeChart.destroy();
+        if (pieChart) pieChart.destroy();
+
+        // Doanh thu (Line)
+        revenueChart = new Chart(revenueCtx, {
+          type: "line",
+          data: {
+            labels: d.labels,
+            datasets: [{
+              label: "Doanh thu (tỷ VND)",
+              data: d.revenue,
+              borderColor: "#0d6efd",
+              backgroundColor: "rgba(13,110,253,0.15)",
+              fill: true,
+              tension: 0.3,
+              pointRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: "bottom" } },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+
+        // Phí franchise (Bar)
+        feeChart = new Chart(feeCtx, {
+          type: "bar",
+          data: {
+            labels: d.labels,
+            datasets: [{
+              label: "Phí franchise (triệu VND)",
+              data: d.fee,
+              backgroundColor: "rgba(25,135,84,0.6)",
+              borderColor: "#198754",
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: "bottom" } },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+
+        // Biểu đồ tròn (Pie)
+        pieChart = new Chart(pieCtx, {
+          type: "pie",
+          data: {
+            labels: ["Đã nộp", "Chậm", "Chưa nộp"],
+            datasets: [{
+              data: [d.status.paid, d.status.late, d.status.unpaid],
+              backgroundColor: ["#198754", "#ffc107", "#dc3545"],
+              borderColor: "#fff",
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "bottom" },
+              tooltip: { callbacks: { label: ctx => ctx.label + ": " + ctx.parsed + "%" } }
+            }
+          }
+        });
+      }
+
+      yearFilter.addEventListener("change", function () {
+        renderCharts(this.value);
+      });
+
+      renderCharts("2025");
+    });
+  </script>
+</body>
+
+</html>
