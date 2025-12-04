@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách hóa đơn phí franchise - Kế toán</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/grid.css">
+  <link rel="stylesheet" href="../css/color.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/button.css">
+  <link rel="stylesheet" href="../css/flex.css">
+  <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/common.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    @media print {
+      .admin-header,
+      .admin-sidebar,
+      .admin-footer,
+      .store-search,
+      #btnExport,
+      #pagination {
+        display: none !important;
+      }
+
+      main.admin-main {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #fff;
+        padding: 40px;
+        font-family: "Times New Roman", Times, serif;
+        color: #000;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        border: 1px solid #333;
+        padding: 8px;
+        text-align: left;
+      }
+
+      .status {
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="logo">Mì Cay Đức Hiệu - Accounting</div>
+
+    <div class="user-menu" id="userMenu">
+      <i class="fas fa-user-circle"></i>
+      <span>Accounting</span>
+
+      <div class="user-dropdown">
+        <a href="profile.html"><i class="fas fa-id-card"></i> Trang cá nhân</a>
+        <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <ul>
+      <li><a href="dashboard.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <li class="active"><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn phí franchise</a></li>
+      <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài chính</a></li>
+      <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo theo cửa hàng</a></li>
+      <li><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất báo cáo</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="fs-2 fw-bold">Danh sách hóa đơn phí franchise</h1>
+      <button id="btnExport" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Xuất PDF</button>
+    </div>
+
+    <!-- Search -->
+    <div class="store-search mb-3 d-flex justify-content-between align-items-center">
+      <input type="text" id="searchInput" class="store-search__input"
+        placeholder="Tìm kiếm theo cửa hàng, tháng, trạng thái...">
+      <button id="btnSearch" class="btn btn-success"><i class="fas fa-search"></i> Tìm kiếm</button>
+    </div>
+
+    <!-- Table -->
+    <section id="printArea">
+      <div class="text-center mb-3" id="printHeader" style="display:none;">
+        <h2 style="text-transform: uppercase;">BÁO CÁO HÓA ĐƠN PHÍ FRANCHISE</h2>
+        <p>Ngày xuất: <span id="printDate"></span></p>
+        <hr style="width: 200px; margin: 10px auto;">
+      </div>
+
+      <table class="report__table store-table" id="invoiceTable">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Cửa hàng</th>
+            <th>Kỳ tính phí</th>
+            <th>Số tiền (VNĐ)</th>
+            <th>Ngày xuất HĐ</th>
+            <th>Ngày thanh toán</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody">
+          <tr><td colspan="7" class="text-center">Chưa có dữ liệu</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pagination -->
+    <div id="pagination" class="pagination d-flex justify-content-center mt-3"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">
+    © 2025 Mì Cay Đức Hiệu - Accounting System
+  </footer>
+
+  <!-- JS -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tableBody = document.getElementById("invoiceTableBody");
+      const pagination = document.getElementById("pagination");
+      const searchInput = document.getElementById("searchInput");
+      const btnSearch = document.getElementById("btnSearch");
+      const btnExport = document.getElementById("btnExport");
+      const printHeader = document.getElementById("printHeader");
+      const printDate = document.getElementById("printDate");
+
+      // Dummy data
+      let invoices = [
+        { id: 1, store: "CN Quận 1", month: "09/2025", amount: 5000000, issueDate: "2025-10-01", payDate: "2025-10-03", status: "Đã thanh toán" },
+        { id: 2, store: "CN Quận 3", month: "09/2025", amount: 5000000, issueDate: "2025-10-01", payDate: "", status: "Chưa thanh toán" },
+        { id: 3, store: "CN Bình Thạnh", month: "09/2025", amount: 4500000, issueDate: "2025-10-01", payDate: "2025-10-04", status: "Đã thanh toán" },
+        { id: 4, store: "CN Hà Nội", month: "09/2025", amount: 6000000, issueDate: "2025-10-01", payDate: "", status: "Chậm" },
+        { id: 5, store: "CN Đà Nẵng", month: "09/2025", amount: 5200000, issueDate: "2025-10-01", payDate: "2025-10-02", status: "Đã thanh toán" },
+        { id: 6, store: "CN Hải Phòng", month: "09/2025", amount: 4800000, issueDate: "2025-10-01", payDate: "", status: "Chưa thanh toán" },
+      ];
+
+      let filteredInvoices = invoices;
+      let currentPage = 1;
+      const itemsPerPage = 10;
+
+      function renderTable(data, page = 1) {
+        tableBody.innerHTML = "";
+        const start = (page - 1) * itemsPerPage;
+        const end = page * itemsPerPage;
+        const pageData = data.slice(start, end);
+
+        if (pageData.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>`;
+          return;
+        }
+
+        pageData.forEach((inv, index) => {
+          const row = `
+            <tr>
+              <td>${start + index + 1}</td>
+              <td>${inv.store}</td>
+              <td>${inv.month}</td>
+              <td>${inv.amount.toLocaleString("vi-VN")}</td>
+              <td>${inv.issueDate}</td>
+              <td>${inv.payDate || "-"}</td>
+              <td><span class="status ${inv.status === "Đã thanh toán" ? "success" : (inv.status === "Chậm" ? "warning" : "danger")}">${inv.status}</span></td>
+            </tr>`;
+          tableBody.insertAdjacentHTML("beforeend", row);
+        });
+
+        renderPagination(data.length, page);
+      }
+
+      function renderPagination(totalItems, page) {
+        pagination.innerHTML = "";
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.className = "btn " + (i === page ? "btn-primary" : "");
+          btn.textContent = i;
+          btn.addEventListener("click", () => {
+            currentPage = i;
+            renderTable(filteredInvoices, currentPage);
+          });
+          pagination.appendChild(btn);
+        }
+      }
+
+      function searchInvoices(keyword) {
+        keyword = keyword.toLowerCase();
+        filteredInvoices = invoices.filter(inv =>
+          inv.store.toLowerCase().includes(keyword) ||
+          inv.month.toLowerCase().includes(keyword) ||
+          inv.status.toLowerCase().includes(keyword)
+        );
+        currentPage = 1;
+        renderTable(filteredInvoices, currentPage);
+      }
+
+      btnSearch.addEventListener("click", () => searchInvoices(searchInput.value.trim()));
+      searchInput.addEventListener("keyup", (e) => { if (e.key === "Enter") searchInvoices(searchInput.value.trim()); });
+
+      // Xuất PDF
+      btnExport.addEventListener("click", function () {
+        const today = new Date();
+        const formatted = today.toLocaleDateString("vi-VN", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit"
+        });
+        printDate.textContent = formatted;
+        printHeader.style.display = "block";
+        window.print();
+        setTimeout(() => printHeader.style.display = "none", 500);
+      });
+
+      renderTable(filteredInvoices, currentPage);
+    });
+  </script>
+</body>
+</html>
