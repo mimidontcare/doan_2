@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Xuất báo cáo - Kế toán | Mì Cay Đức Hiệu</title>
+
+  <!-- CSS hệ thống -->
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/grid.css">
+  <link rel="stylesheet" href="../css/color.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/button.css">
+  <link rel="stylesheet" href="../css/flex.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/common.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    .export-form {
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .export-form .form-group {
+      margin-bottom: 16px;
+    }
+
+    .export-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .export-form select,
+    .export-form input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .export-form .btn {
+      margin-right: 8px;
+    }
+
+    .preview-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-top: 25px;
+    }
+
+    @media print {
+
+      .admin-header,
+      .admin-sidebar,
+      .admin-footer,
+      .export-form,
+      #btnExcel {
+        display: none !important;
+      }
+
+      .preview-box {
+        box-shadow: none;
+      }
+
+      body {
+        background: #fff;
+        padding: 40px;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="logo">Mì Cay Đức Hiệu - Accounting</div>
+
+    <div class="user-menu" id="userMenu">
+      <i class="fas fa-user-circle"></i>
+      <span>Accounting</span>
+
+      <div class="user-dropdown">
+        <a href="profile.html"><i class="fas fa-id-card"></i> Trang cá nhân</a>
+        <a href="change-password.html"><i class="fas fa-key"></i> Đổi mật khẩu</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <ul>
+      <li><a href="dashboard.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-line"></i>
+          Dashboard</a></li>
+      <li><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn
+          phí franchise</a></li>
+      <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài
+          chính</a></li>
+      <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo
+          theo
+          cửa hàng</a></li>
+      <li class="active"><a href="export.html" style="color:white;text-decoration:none;"><i
+            class="fas fa-file-export"></i> Xuất
+          báo cáo</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <h1 class="fs-2 fw-bold mb-3">Xuất báo cáo</h1>
+
+    <!-- Form chọn -->
+    <div class="export-form">
+      <div class="form-group">
+        <label for="reportType">Loại báo cáo</label>
+        <select id="reportType">
+          <option value="financial" selected>Báo cáo tài chính</option>
+          <option value="store">Báo cáo theo cửa hàng</option>
+          <option value="invoice">Hóa đơn phí franchise</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="yearSelect">Chọn năm</label>
+        <select id="yearSelect">
+          <option value="2025" selected>2025</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="monthSelect">Chọn tháng</label>
+        <select id="monthSelect">
+          <option value="09" selected>Tháng 09</option>
+          <option value="08">Tháng 08</option>
+          <option value="07">Tháng 07</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button id="btnPreview" class="btn btn-info"><i class="fas fa-eye"></i> Xem trước</button>
+        <button id="btnPDF" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Xuất PDF</button>
+        <button id="btnExcel" class="btn btn-success"><i class="fas fa-file-excel"></i> Xuất Excel</button>
+      </div>
+    </div>
+
+    <!-- Khu hiển thị báo cáo -->
+    <div class="preview-box" id="previewBox">
+      <h2 class="fs-4 fw-bold mb-2">Xem trước báo cáo</h2>
+      <div id="reportPreview">
+        <p>Chưa có dữ liệu để hiển thị. Vui lòng chọn loại báo cáo và bấm “Xem trước”.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">© 2025 Mì Cay Đức Hiệu - Accounting System</footer>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const reportType = document.getElementById("reportType");
+      const yearSelect = document.getElementById("yearSelect");
+      const monthSelect = document.getElementById("monthSelect");
+      const btnPreview = document.getElementById("btnPreview");
+      const btnPDF = document.getElementById("btnPDF");
+      const btnExcel = document.getElementById("btnExcel");
+      const reportPreview = document.getElementById("reportPreview");
+
+      // Dữ liệu mẫu
+      const dummy = {
+        financial: [
+          { month: "09/2025", revenue: "3.2 tỷ", fee: "160 triệu", profit: "2.8 tỷ" },
+          { month: "08/2025", revenue: "3.0 tỷ", fee: "150 triệu", profit: "2.7 tỷ" },
+        ],
+        store: [
+          { store: "CN Q1", revenue: "420 triệu", fee: "20 triệu", status: "Đã nộp" },
+          { store: "CN Q3", revenue: "380 triệu", fee: "18 triệu", status: "Chậm" },
+          { store: "CN Hà Nội", revenue: "480 triệu", fee: "24 triệu", status: "Chưa nộp" },
+        ],
+        invoice: [
+          { id: "HD-001", store: "CN Q1", amount: "5,000,000", date: "03/10/2025", status: "Đã thanh toán" },
+          { id: "HD-002", store: "CN Q3", amount: "5,000,000", date: "-", status: "Chậm" },
+        ],
+      };
+
+      function renderPreview(type) {
+        let html = "";
+        if (type === "financial") {
+          html = `
+            <table class="report__table">
+              <thead><tr><th>Tháng</th><th>Doanh thu</th><th>Phí franchise</th><th>Lợi nhuận</th></tr></thead>
+              <tbody>${dummy.financial.map(d => `
+                <tr><td>${d.month}</td><td>${d.revenue}</td><td>${d.fee}</td><td>${d.profit}</td></tr>
+              `).join("")}</tbody>
+            </table>`;
+        } else if (type === "store") {
+          html = `
+            <table class="report__table">
+              <thead><tr><th>Cửa hàng</th><th>Doanh thu</th><th>Phí franchise</th><th>Trạng thái</th></tr></thead>
+              <tbody>${dummy.store.map(d => `
+                <tr><td>${d.store}</td><td>${d.revenue}</td><td>${d.fee}</td><td>${d.status}</td></tr>
+              `).join("")}</tbody>
+            </table>`;
+        } else {
+          html = `
+            <table class="report__table">
+              <thead><tr><th>Mã HĐ</th><th>Cửa hàng</th><th>Số tiền</th><th>Ngày nộp</th><th>Trạng thái</th></tr></thead>
+              <tbody>${dummy.invoice.map(d => `
+                <tr><td>${d.id}</td><td>${d.store}</td><td>${d.amount}</td><td>${d.date}</td><td>${d.status}</td></tr>
+              `).join("")}</tbody>
+            </table>`;
+        }
+        reportPreview.innerHTML = html;
+      }
+
+      btnPreview.addEventListener("click", () => {
+        renderPreview(reportType.value);
+      });
+
+      btnPDF.addEventListener("click", () => {
+        window.print();
+      });
+
+      btnExcel.addEventListener("click", () => {
+        const type = reportType.value;
+        let data = dummy[type];
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Report");
+        const filename = `${type}-report-${monthSelect.value}-${yearSelect.value}.xlsx`;
+        XLSX.writeFile(wb, filename);
+      });
+    });
+  </script>
+</body>
+
+</html>
