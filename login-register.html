@@ -205,6 +205,16 @@
                     <input type="password" id="loginPassword" required placeholder="Nhập mật khẩu...">
                 </div>
 
+                <div class="form-group">
+                    <label for="loginRole">Đăng nhập với tư cách</label>
+                    <select id="loginRole" required style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                        <option value="">-- Chọn vai trò --</option>
+                        <option value="admin"> Quản trị viên (Admin)</option>
+                        <option value="accounting"> Kế toán (Accounting)</option>
+                        <option value="franchisee"> Chủ cửa hàng (Franchisee)</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
 
                 <div class="auth-footer">
@@ -257,6 +267,29 @@
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
 
+        // Dữ liệu tài khoản mẫu (trong thực tế nên lưu trong database)
+        // Mỗi user có thể có nhiều roles (lưu dạng array)
+        const users = [
+            { 
+                email: "admin@gmail.com", 
+                password: "admin123", 
+                roles: ["admin", "accounting", "franchisee"], // Admin có full quyền
+                name: "Admin" 
+            },
+            { 
+                email: "accounting@gmail.com", 
+                password: "acc123", 
+                roles: ["accounting"], 
+                name: "Accounting" 
+            },
+            { 
+                email: "franchisee@gmail.com", 
+                password: "fran123", 
+                roles: ["franchisee"], 
+                name: "Nguyễn Văn Anh" 
+            },
+        ];
+
         loginTab.addEventListener('click', () => {
             loginTab.classList.add('active');
             registerTab.classList.remove('active');
@@ -271,22 +304,129 @@
             loginForm.classList.remove('active');
         });
 
+        // Xử lý đăng nhập với validation
         loginForm.addEventListener('submit', e => {
             e.preventDefault();
-            alert('Đăng nhập thành công!');
-            window.location.href = "admin/dashboard.html";
-        });
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const selectedRole = document.getElementById('loginRole').value;
 
-        registerForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const pass = document.getElementById('regPassword').value;
-            const confirm = document.getElementById('regConfirm').value;
-            if (pass !== confirm) {
-                alert('Mật khẩu xác nhận không khớp!');
+            // Validate input
+            if (!email || !password) {
+                alert('Vui lòng nhập đầy đủ email và mật khẩu!');
                 return;
             }
-            alert('Đăng ký thành công! Bạn có thể đăng nhập.');
+
+            if (!selectedRole) {
+                alert('Vui lòng chọn vai trò đăng nhập!');
+                return;
+            }
+
+            // Tìm user trong danh sách
+            const user = users.find(u => u.email === email);
+
+            if (!user) {
+                alert('Email không tồn tại trong hệ thống!');
+                return;
+            }
+
+            if (user.password !== password) {
+                alert('Mật khẩu không chính xác!');
+                return;
+            }
+
+            // Kiểm tra user có quyền với role đã chọn không
+            if (!user.roles.includes(selectedRole)) {
+                const roleNames = user.roles.map(r => {
+                    if (r === 'admin') return 'Quản trị viên';
+                    if (r === 'accounting') return 'Kế toán';
+                    if (r === 'franchisee') return 'Chủ cửa hàng';
+                    return r;
+                }).join(', ');
+                
+                alert('Tài khoản của bạn không có quyền truy cập với vai trò này!\n\nVai trò khả dụng: ' + roleNames);
+                return;
+            }
+
+            // Đăng nhập thành công - chuyển hướng theo role đã chọn
+            const roleName = selectedRole === 'admin' ? 'Quản trị viên' : 
+                           selectedRole === 'accounting' ? 'Kế toán' : 'Chủ cửa hàng';
+            
+            alert('Đăng nhập thành công!\nXin chào ' + user.name + '!\nVai trò: ' + roleName);
+            
+            // Lưu thông tin user vào localStorage
+            localStorage.setItem('currentUser', JSON.stringify({
+                email: user.email,
+                name: user.name,
+                role: selectedRole
+            }));
+
+            // Chuyển hướng theo role đã chọn
+            switch (selectedRole) {
+                case 'admin':
+                    window.location.href = "admin/dashboard.html";
+                    break;
+                case 'accounting':
+                    window.location.href = "accounting/dashboard.html";
+                    break;
+                case 'franchisee':
+                    window.location.href = "franchisee/dashboard.html";
+                    break;
+                default:
+                    window.location.href = "index.html";
+            }
+        });
+
+        // Xử lý đăng ký
+        registerForm.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const pass = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+
+            // Validate
+            if (!name || !email || !phone || !pass || !confirm) {
+                alert(' Vui lòng điền đầy đủ thông tin!');
+                return;
+            }
+
+            if (pass.length < 6) {
+                alert(' Mật khẩu phải có ít nhất 6 ký tự!');
+                return;
+            }
+
+            if (pass !== confirm) {
+                alert(' Mật khẩu xác nhận không khớp!');
+                return;
+            }
+
+            // Kiểm tra email đã tồn tại chưa
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser) {
+                alert(' Email này đã được đăng ký!');
+                return;
+            }
+
+            // Đăng ký thành công (trong thực tế cần gửi lên server)
+            alert('Đăng ký thành công! Bạn có thể đăng nhập ngay.');
+            
+            // Thêm user mới vào danh sách (demo only)
+            users.push({
+                email: email,
+                password: pass,
+                roles: ['franchisee'], // Mặc định là franchisee (dạng array)
+                name: name
+            });
+
+            // Chuyển về tab đăng nhập
             loginTab.click();
+            
+            // Tự động điền email vào form login
+            document.getElementById('loginEmail').value = email;
         });
     </script>
 </body>

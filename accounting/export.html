@@ -66,8 +66,7 @@
       .admin-header,
       .admin-sidebar,
       .admin-footer,
-      .export-form,
-      #btnExcel {
+      .export-form {
         display: none !important;
       }
 
@@ -107,16 +106,10 @@
     <ul>
       <li><a href="dashboard.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-line"></i>
           Dashboard</a></li>
-      <li><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn
-          phí franchise</a></li>
-      <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài
-          chính</a></li>
-      <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo
-          theo
-          cửa hàng</a></li>
-      <li class="active"><a href="export.html" style="color:white;text-decoration:none;"><i
-            class="fas fa-file-export"></i> Xuất
-          báo cáo</a></li>
+      <li><a href="franchisee-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn phí franchise</a></li>
+      <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài chính</a></li>
+      <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo theo cửa hàng</a></li>
+      <li class="active"><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất báo cáo</a></li>
     </ul>
   </aside>
 
@@ -155,7 +148,6 @@
       <div class="form-actions">
         <button id="btnPreview" class="btn btn-info"><i class="fas fa-eye"></i> Xem trước</button>
         <button id="btnPDF" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Xuất PDF</button>
-        <button id="btnExcel" class="btn btn-success"><i class="fas fa-file-excel"></i> Xuất Excel</button>
       </div>
     </div>
 
@@ -172,7 +164,7 @@
   <footer class="admin-footer">© 2025 Mì Cay Đức Hiệu - Accounting System</footer>
 
   <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="../js/common.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const reportType = document.getElementById("reportType");
@@ -180,7 +172,6 @@
       const monthSelect = document.getElementById("monthSelect");
       const btnPreview = document.getElementById("btnPreview");
       const btnPDF = document.getElementById("btnPDF");
-      const btnExcel = document.getElementById("btnExcel");
       const reportPreview = document.getElementById("reportPreview");
 
       // Dữ liệu mẫu
@@ -236,16 +227,6 @@
 
       btnPDF.addEventListener("click", () => {
         window.print();
-      });
-
-      btnExcel.addEventListener("click", () => {
-        const type = reportType.value;
-        let data = dummy[type];
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Report");
-        const filename = `${type}-report-${monthSelect.value}-${yearSelect.value}.xlsx`;
-        XLSX.writeFile(wb, filename);
       });
     });
   </script>

@@ -271,7 +271,7 @@ body {
 
     .user-dropdown {
       position: absolute;
-      top: 110%;
+      top: 100%;
       right: 0;
       background: #fff;
       color: #333;

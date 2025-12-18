@@ -19,38 +19,6 @@
     integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <style>
-    .filter-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .year-filter,
-    .month-filter {
-      padding: 6px 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #fff;
-    }
-
-    .chart-box {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      padding: 20px;
-      margin-top: 25px;
-    }
-
-    canvas {
-      width: 100%;
-      max-width: 1100px;
-      height: 380px;
-      display: block;
-      margin: auto;
-    }
-  </style>
 </head>
 
 <body>
@@ -76,13 +44,10 @@
     <ul>
       <li><a href="dashboard.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-line"></i>
           Dashboard</a></li>
-      <li><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn
-          phí franchise</a></li>
+      <li><a href="franchisee-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn phí franchise</a></li>
       <li><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài
           chính</a></li>
-      <li class="active"><a href="report-store.html" style="color:white;text-decoration:none;"><i
-            class="fas fa-store"></i> Báo cáo theo
-          cửa hàng</a></li>
+      <li class="active"><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo theo cửa hàng</a></li>
       <li><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất
           báo cáo</a></li>
     </ul>
@@ -90,33 +55,7 @@
 
   <!-- Main -->
   <main class="admin-main">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1 class="fs-2 fw-bold">Báo cáo theo cửa hàng</h1>
-      <div class="filter-bar">
-        <select id="monthFilter" class="month-filter">
-          <option value="09" selected>Tháng 09</option>
-          <option value="08">Tháng 08</option>
-          <option value="07">Tháng 07</option>
-        </select>
-        <select id="yearFilter" class="year-filter">
-          <option value="2025" selected>2025</option>
-          <option value="2024">2024</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Biểu đồ Top 5 -->
-    <section class="chart-box">
-      <h2 class="fs-4 fw-bold mb-3"><i class="fas fa-trophy text-warning"></i> Top 5 cửa hàng doanh thu cao nhất</h2>
-      <canvas id="topStoreChart"></canvas>
-    </section>
-
-    <!-- Biểu đồ so sánh tổng quan -->
-    <section class="chart-box">
-      <h2 class="fs-4 fw-bold mb-3"><i class="fas fa-chart-bar text-primary"></i> So sánh doanh thu và phí franchise
-        theo cửa hàng</h2>
-      <canvas id="compareChart"></canvas>
-    </section>
+    <h1 class="fs-2 fw-bold mb-3">Báo cáo theo cửa hàng</h1>
 
     <!-- Bảng dữ liệu -->
     <section class="mt-4">
@@ -140,106 +79,22 @@
   <!-- Footer -->
   <footer class="admin-footer">© 2025 Mì Cay Đức Hiệu - Accounting System</footer>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/common.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const topCtx = document.getElementById("topStoreChart");
-      const compareCtx = document.getElementById("compareChart");
-      const yearFilter = document.getElementById("yearFilter");
-      const monthFilter = document.getElementById("monthFilter");
       const tableBody = document.getElementById("storeTableBody");
 
       // Dữ liệu mẫu
-      const DB = {
-        "2025": {
-          "09": [
-            { name: "CN Quận 1", revenue: 420, fee: 20, rate: 100, status: "Đã nộp" },
-            { name: "CN Quận 3", revenue: 380, fee: 18, rate: 90, status: "Chậm" },
-            { name: "CN Bình Thạnh", revenue: 350, fee: 17, rate: 95, status: "Đã nộp" },
-            { name: "CN Hà Nội", revenue: 480, fee: 24, rate: 80, status: "Chưa nộp" },
-            { name: "CN Đà Nẵng", revenue: 460, fee: 23, rate: 100, status: "Đã nộp" },
-            { name: "CN Cần Thơ", revenue: 370, fee: 18, rate: 92, status: "Đã nộp" }
-          ],
-          "08": [
-            { name: "CN Quận 1", revenue: 410, fee: 20, rate: 95, status: "Đã nộp" },
-            { name: "CN Quận 3", revenue: 360, fee: 17, rate: 88, status: "Chậm" },
-            { name: "CN Bình Thạnh", revenue: 340, fee: 16, rate: 96, status: "Đã nộp" },
-            { name: "CN Hà Nội", revenue: 470, fee: 23, rate: 85, status: "Chưa nộp" },
-            { name: "CN Đà Nẵng", revenue: 455, fee: 22, rate: 98, status: "Đã nộp" },
-            { name: "CN Cần Thơ", revenue: 350, fee: 17, rate: 90, status: "Đã nộp" }
-          ]
-        }
-      };
+      const stores = [
+        { name: "CN Quận 1", revenue: 420, fee: 20, rate: 100, status: "Đã nộp" },
+        { name: "CN Quận 3", revenue: 380, fee: 18, rate: 90, status: "Chậm" },
+        { name: "CN Bình Thạnh", revenue: 350, fee: 17, rate: 95, status: "Đã nộp" },
+        { name: "CN Hà Nội", revenue: 480, fee: 24, rate: 80, status: "Chưa nộp" },
+        { name: "CN Đà Nẵng", revenue: 460, fee: 23, rate: 100, status: "Đã nộp" },
+        { name: "CN Cần Thơ", revenue: 370, fee: 18, rate: 92, status: "Đã nộp" }
+      ];
 
-      let topChart, compareChart;
-
-      function renderCharts(year, month) {
-        const stores = DB[year][month];
-        const labels = stores.map(s => s.name);
-        const revenues = stores.map(s => s.revenue);
-        const fees = stores.map(s => s.fee);
-
-        // Top 5
-        const top5 = [...stores].sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-        const topLabels = top5.map(s => s.name);
-        const topValues = top5.map(s => s.revenue);
-
-        if (topChart) topChart.destroy();
-        if (compareChart) compareChart.destroy();
-
-        // Biểu đồ Top 5
-        topChart = new Chart(topCtx, {
-          type: "bar",
-          data: {
-            labels: topLabels,
-            datasets: [{
-              label: "Doanh thu (triệu VND)",
-              data: topValues,
-              backgroundColor: "rgba(13,110,253,0.6)",
-              borderColor: "#0d6efd",
-              borderWidth: 1
-            }]
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } },
-            responsive: true
-          }
-        });
-
-        // Biểu đồ so sánh
-        compareChart = new Chart(compareCtx, {
-          type: "bar",
-          data: {
-            labels,
-            datasets: [
-              {
-                label: "Doanh thu (triệu VND)",
-                data: revenues,
-                backgroundColor: "rgba(13,110,253,0.5)",
-                borderColor: "#0d6efd",
-                borderWidth: 1
-              },
-              {
-                label: "Phí franchise (triệu VND)",
-                data: fees,
-                backgroundColor: "rgba(25,135,84,0.5)",
-                borderColor: "#198754",
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            plugins: { legend: { position: "bottom" } },
-            scales: { y: { beginAtZero: true } }
-          }
-        });
-      }
-
-      function renderTable(year, month) {
-        const stores = DB[year][month];
+      function renderTable() {
         tableBody.innerHTML = "";
         stores.forEach((s, i) => {
           const color = s.status === "Đã nộp" ? "success" : s.status === "Chậm" ? "warning" : "danger";
@@ -255,19 +110,8 @@
         });
       }
 
-      yearFilter.addEventListener("change", () => {
-        renderCharts(yearFilter.value, monthFilter.value);
-        renderTable(yearFilter.value, monthFilter.value);
-      });
-
-      monthFilter.addEventListener("change", () => {
-        renderCharts(yearFilter.value, monthFilter.value);
-        renderTable(yearFilter.value, monthFilter.value);
-      });
-
       // Khởi tạo
-      renderCharts("2025", "09");
-      renderTable("2025", "09");
+      renderTable();
     });
   </script>
 </body>

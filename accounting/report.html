@@ -21,28 +21,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        .filter-bar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: .5rem;
-        }
-
-        .year-filter {
-            padding: .5rem .75rem;
-            border: 1px solid #dee2e6;
-            border-radius: .375rem;
-            background: #fff;
-        }
-
-        canvas {
-            width: 100%;
-            max-width: 1100px;
-            height: 360px;
-            display: block;
-            margin: auto;
-        }
-
         @media print {
 
             .admin-header,
@@ -107,15 +85,10 @@
         <ul>
             <li><a href="dashboard.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-line"></i>
                     Dashboard</a></li>
-            <li><a href="franchise-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i>
-                    Hóa đơn phí franchise</a></li>
-            <li class="active"><a href="report.html" style="color:white;text-decoration:none;"><i
-                        class="fas fa-chart-pie"></i> Báo cáo
-                    tài chính</a></li>
-            <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo
-                    cáo theo cửa hàng</a></li>
-            <li><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất
-                    báo cáo</a></li>
+            <li><a href="franchisee-fee.html" style="color:white;text-decoration:none;"><i class="fas fa-receipt"></i> Hóa đơn phí franchise</a></li>
+            <li class="active"><a href="report.html" style="color:white;text-decoration:none;"><i class="fas fa-chart-pie"></i> Báo cáo tài chính</a></li>
+            <li><a href="report-store.html" style="color:white;text-decoration:none;"><i class="fas fa-store"></i> Báo cáo theo cửa hàng</a></li>
+            <li><a href="export.html" style="color:white;text-decoration:none;"><i class="fas fa-file-export"></i> Xuất báo cáo</a></li>
         </ul>
     </aside>
 
@@ -125,28 +98,6 @@
             <h1 class="fs-2 fw-bold">Báo cáo tài chính tổng hợp</h1>
             <button id="btnExport" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Xuất PDF</button>
         </div>
-
-        <!-- Bộ lọc năm -->
-        <div class="filter-bar mb-3">
-            <label for="yearFilter" class="fw-bold">Năm:</label>
-            <select id="yearFilter" class="year-filter">
-                <option value="2025" selected>2025</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-            </select>
-        </div>
-
-        <!-- Biểu đồ doanh thu -->
-        <section class="table-box mb-4">
-            <h2 class="fs-4 fw-bold mb-3">Doanh thu theo tháng (tỷ VND)</h2>
-            <canvas id="revenueChart"></canvas>
-        </section>
-
-        <!-- Biểu đồ phí franchise -->
-        <section class="table-box mb-4">
-            <h2 class="fs-4 fw-bold mb-3">Phí franchise theo tháng (triệu VND)</h2>
-            <canvas id="feeChart"></canvas>
-        </section>
 
         <!-- Bảng dữ liệu -->
         <section id="printArea">
@@ -175,13 +126,9 @@
     <!-- Footer -->
     <footer class="admin-footer">© 2025 Mì Cay Đức Hiệu - Accounting System</footer>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/common.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const revenueCtx = document.getElementById("revenueChart");
-            const feeCtx = document.getElementById("feeChart");
-            const yearFilter = document.getElementById("yearFilter");
             const tableBody = document.getElementById("financeTableBody");
             const btnExport = document.getElementById("btnExport");
             const printHeader = document.getElementById("printHeader");
@@ -220,62 +167,8 @@
                 ]
             };
 
-            let revenueChart, feeChart;
-
-            function renderCharts(year) {
-                const rows = DB[year];
-                const labels = rows.map(r => r.m);
-                const rev = rows.map(r => r.rev);
-                const fees = rows.map(r => r.fee);
-
-                if (revenueChart) revenueChart.destroy();
-                if (feeChart) feeChart.destroy();
-
-                // Chart 1: Revenue
-                revenueChart = new Chart(revenueCtx, {
-                    type: "line",
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: "Doanh thu (tỷ VND)",
-                            data: rev,
-                            borderColor: "#0d6efd",
-                            backgroundColor: "rgba(13,110,253,0.15)",
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: "bottom" } },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
-
-                // Chart 2: Franchise fee
-                feeChart = new Chart(feeCtx, {
-                    type: "bar",
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: "Phí franchise (triệu VND)",
-                            data: fees,
-                            backgroundColor: "rgba(25,135,84,0.6)",
-                            borderColor: "#198754",
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { position: "bottom" } },
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
-            }
-
-            function renderTable(year) {
-                const rows = DB[year];
+            function renderTable() {
+                const rows = DB["2025"];
                 tableBody.innerHTML = "";
                 rows.forEach(r => {
                     const profit = Math.max(0, Math.round(r.rev * 1000 - r.fee));
@@ -292,14 +185,6 @@
                 });
             }
 
-            // Lọc theo năm
-            yearFilter.addEventListener("change", function () {
-                const y = this.value;
-                yearTitle.textContent = y;
-                renderCharts(y);
-                renderTable(y);
-            });
-
             // Xuất PDF
             btnExport.addEventListener("click", function () {
                 const today = new Date();
@@ -314,10 +199,8 @@
             });
 
             // Khởi tạo
-            const initYear = yearFilter.value;
-            yearTitle.textContent = initYear;
-            renderCharts(initYear);
-            renderTable(initYear);
+            yearTitle.textContent = "2025";
+            renderTable();
         });
     </script>
 </body>
