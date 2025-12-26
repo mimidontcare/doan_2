@@ -87,6 +87,9 @@
 .vision__box {
   background: #fff;
   padding: 2rem 1.5rem;
+
+
+  
   border-radius: 1rem;
   text-align: center;
   transition: transform .3s, box-shadow .3s;
